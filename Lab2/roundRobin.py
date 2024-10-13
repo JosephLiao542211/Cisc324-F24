@@ -25,12 +25,13 @@ def round_robin_scheduling(processes, quantum):
                     t += rem_burst_times[i]
                     waiting_time[i] = t - processes[i][1]
                     rem_burst_times[i] = 0
-                    process_executed = True
+                    process_executed = True 
 
                 if process_executed:
-                    #NOTE: do the required change here
-                    #NOTE: print a message "Process <process number> executed for <number of units> units"
                     pass
+                    #NOTE: do the required change here
+                    # print(f"Process {processes[i][0]} executed for {order[-1][1]} units")
+                    
 
     # Calculate turnaround time
     for i in range(n):
@@ -52,9 +53,17 @@ def round_robin_scheduling(processes, quantum):
     #NOTE do the required change here
 
 if __name__ == '__main__':
-    #NOTE do the required change here 
-    # List of processes [process_id, burst_time]
-    # Assuming same initial arrival time for all process
-    processes = [[1, 10], [2, 1], [3, 2], [4, 1], [5, 5]]
-    quantum = 2
-    round_robin_scheduling(processes, quantum)
+    while True:
+        # Ask user for a new quantum value
+        quantum = int(input("Enter the time quantum: "))
+
+        # List of processes [process_id, burst_time]
+        # Assuming same initial arrival time for all processes
+        processes = [[1, 10], [2, 1], [3, 2], [4, 1], [5, 5]]
+        
+        round_robin_scheduling(processes, quantum)
+
+        # Ask the user if they want to continue
+        continue_choice = input("\nDo you want to try with a different quantum? (Y to continue, any other key to exit): ").upper()
+        if continue_choice != 'Y':
+            break

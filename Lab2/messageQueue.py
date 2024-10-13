@@ -25,5 +25,5 @@ def parentProcess():
 
 if __name__ == '__main__':
     #NOTE: Print your name and ID
-    print("Hi, this is <Put your name and ID>")
+    print("Hi, this is Joseph Liao and 20366481")
     parentProcess()
