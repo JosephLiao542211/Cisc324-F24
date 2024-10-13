@@ -3,7 +3,7 @@ import time
 
 """
 This program demonstrates a simple IPC via message queue with multiple child processes.
-Student Last name and ID:  
+Student Last name and ID:  Joseph Liao and 20366481
 """
 
 def childProcess(q, num_messages, child_id):
