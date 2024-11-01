@@ -23,6 +23,7 @@ TOTAL_ARTICLES = NUM_WRITERS  # Total articles expected
 # Event to signal that all articles are reviewed
 stop_editors = threading.Event()
 
+articles_submitted_lock = threading.Lock()
 
 def writer_task(writer_id):
     """Simulates a writer drafting and submitting an article."""
@@ -36,9 +37,18 @@ def writer_task(writer_id):
         print(f"Writer {writer_id} is waiting for a review slot.")
 
     # TODO 1: Acquire the review slot before submission
+    review_slots.acquire()
 
     with print_lock:  # console is a shared resource, so we need to lock it
         print(f"Writer {writer_id} has submitted an article for review.")
+
+
+
+    with articles_submitted_lock:
+        global articles_submitted
+        articles_submitted += 1
+
+    review_slots.release()
 
     # TODO 2: Safely update the shared variable `articles_submitted` tracking the number of submitted articles
 
@@ -51,27 +61,38 @@ def editor_task(editor_id):
         # Simulate the time before checking for an article
         time.sleep(random.uniform(0.5, 1.5))
 
-        with print_lock:  # console is a shared resource, so we need to lock it
+        with print_lock:  
             print(f"Editor {editor_id} is checking for an article to review.")
 
+        editor_lock.acquire(timeout=4)
         # TODO 4: Acquire the editor lock with a timeout to avoid deadlock
 
         try:
-            # TODO 5: Check if there are articles to review
-            with print_lock:  # console is a shared resource, so we need to lock it
-                print(f"Editor {editor_id} is reviewing an article.")
-            time.sleep(random.uniform(1, 3))  # Simulate review time
+            with articles_submitted_lock:
+                global articles_submitted
+                if  articles_submitted > 0:
+                    
+                    # TODO 5: Check if there are articles to review
+                    with print_lock:  # console is a shared resource, so we need to lock it
+                        print(f"Editor {editor_id} is reviewing an article.")
+                    time.sleep(random.uniform(1, 3))  # Simulate review time
 
-            with print_lock:  # console is a shared resource, so we need to lock it
-                print(f"Editor {editor_id} has finished reviewing an article.")
+                    with print_lock:  # console is a shared resource, so we need to lock it
+                        print(f"Editor {editor_id} has finished reviewing an article.")
 
-            # TODO 7: Safely decrement the number of submitted articles
+                    # TODO 7: Safely decrement the number of submitted articles
+                    articles_submitted -= 1
 
-            # TODO 8: Stop editors if all articles are reviewed
+                    if articles_submitted == 0 and TOTAL_ARTICLES == NUM_WRITERS:
+                            stop_editors.set()
+
+
+                # TODO 8: Stop editors if all articles are reviewed
 
         finally:
+            editor_lock.release()
             # TODO 9: Ensure the editor lock is released
-            pass  # TODO 10: Remove this line after adding the code
+            # TODO 10: Remove this line after adding the code
 
     with print_lock:
         print(f"Editor {editor_id} is stopping as all reviews are complete.")
