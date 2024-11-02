@@ -3,9 +3,9 @@ import time
 import random
 
 # Constants for the number of writers, editors, and available review slots
-NUM_WRITERS = 5  # Number of writers to simulate
+NUM_WRITERS = 20  # Number of writers to simulate
 NUM_EDITORS = 2  # Number of editors to simulate
-NUM_SLOTS = 3  # Maximum simultaneous reviews
+NUM_SLOTS = 1  # Maximum simultaneous reviews
 
 # Semaphore to manage available review slots
 review_slots = threading.Semaphore(NUM_SLOTS)
