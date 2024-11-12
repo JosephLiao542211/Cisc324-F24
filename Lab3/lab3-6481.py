@@ -37,6 +37,7 @@ def writer_task(writer_id):
         print(f"Writer {writer_id} is waiting for a review slot.")
 
     # TODO 1: Acquire the review slot before submission
+    
     review_slots.acquire()
 
     with print_lock:  # console is a shared resource, so we need to lock it
@@ -53,6 +54,7 @@ def writer_task(writer_id):
     # TODO 2: Safely update the shared variable `articles_submitted` tracking the number of submitted articles
 
     # TODO 3: Release the review slot after submission
+    review_slots.release()
 
 
 def editor_task(editor_id):
